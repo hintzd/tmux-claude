@@ -25,7 +25,7 @@ A tmux plugin that displays emoji status indicators in pane names when Claude Co
 1. Add the plugin to your `~/.tmux.conf`:
 
    ```bash
-   set -g @plugin 'leotomas/tmux-claude'
+   set -g @plugin 'hintzd/tmux-claude'
    ```
 
 2. Press `prefix + I` to install the plugin.
@@ -35,7 +35,7 @@ A tmux plugin that displays emoji status indicators in pane names when Claude Co
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/leotomas/tmux-claude.git ~/.tmux/plugins/tmux-claude
+   git clone https://github.com/hintzd/tmux-claude.git ~/.tmux/plugins/tmux-claude
    ```
 
 2. Add to your `~/.tmux.conf`:

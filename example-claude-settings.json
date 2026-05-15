@@ -1,5 +1,15 @@
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py running"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -10,26 +20,15 @@
         ]
       }
     ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py notification"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py pretooluse"
+            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py permission"
           }
         ]
       }
     ]
   }
 }
-

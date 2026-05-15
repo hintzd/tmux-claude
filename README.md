@@ -1,12 +1,12 @@
 # Claude Tmux Plugin
 
-A tmux plugin that displays emoji status indicators in pane names when Claude Code finishes responding or sends notifications. The plugin tracks multiple Claude instances across different tmux panes and shows the appropriate emoji for each pane.
+A tmux plugin that displays emoji status indicators in pane names when Claude Code is running, finishes responding, or needs tool permission. The plugin tracks multiple Claude instances across different tmux panes and shows the appropriate emoji for each pane.
 
 ## Features
 
+- **🏃 Running Status**: Shows running emoji when user submits a prompt
 - **✅ Stop Status**: Shows checkmark emoji when Claude finishes responding
-- **📢 Notification Status**: Shows notification emoji when Claude sends notifications
-- **❓ PreToolUse Status**: Shows question mark emoji when Claude needs tool permission
+- **❓ Permission Status**: Shows question mark emoji when Claude needs tool permission
 - **Multi-pane Support**: Tracks multiple Claude instances across different tmux panes
 - **Smart Restoration**: Automatically restores original pane names when user switches panes or presses Enter
 - **Pure Python**: No external dependencies, uses only Python 3 standard library
@@ -75,6 +75,16 @@ Add the following configuration to your `~/.claude/settings.json`:
 ```json
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/path/to/tmux-claude/scripts/claude_tmux_hooks.py running"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -85,22 +95,12 @@ Add the following configuration to your `~/.claude/settings.json`:
         ]
       }
     ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/tmux-claude/scripts/claude_tmux_hooks.py notification"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "/path/to/tmux-claude/scripts/claude_tmux_hooks.py pretooluse"
+            "command": "/path/to/tmux-claude/scripts/claude_tmux_hooks.py permission"
           }
         ]
       }
@@ -141,9 +141,9 @@ Test the notification system:
 Test emoji status in current pane:
 
 ```bash
+./scripts/claude_tmux_hooks.py running
 ./scripts/claude_tmux_hooks.py stop
-./scripts/claude_tmux_hooks.py notification
-./scripts/claude_tmux_hooks.py pretooluse
+./scripts/claude_tmux_hooks.py permission
 ```
 
 Restore original pane name:
@@ -174,14 +174,14 @@ View tracked panes status:
 
 ## How It Works
 
-1. **Hook Integration**: Claude Code hooks trigger the plugin when Claude stops, sends notifications, or needs tool permission (PreToolUse).
+1. **Hook Integration**: Claude Code hooks trigger the plugin when the user submits a prompt, Claude stops, or a tool needs permission.
 
 2. **Pane Detection**: The plugin identifies which tmux pane the Claude instance is running in using the `$TMUX_PANE` environment variable, ensuring the emoji appears on the correct pane even when you're working in a different pane.
 
 3. **Emoji Prefixes**: The plugin adds emoji prefixes to window names:
 
+   - 🏃 when the user submits a prompt (`UserPromptSubmit` hook)
    - ✅ when Claude finishes (`Stop` hook)
-   - 📢 when Claude sends notifications (`Notification` hook)
    - ❓ when Claude needs tool permission (`PreToolUse` hook)
 
 4. **Activity Monitoring**: The plugin monitors pane activity and restores original names when users switch panes or press Enter.
@@ -303,8 +303,9 @@ Debug logs are stored in `scripts/.logs/`:
 ### Common Debug Commands
 
 ```bash
-# Enable debug and test stop hook
+# Enable debug and test hooks
 ./scripts/debug_logger.py enable
+./scripts/claude_tmux_hooks.py running
 ./scripts/claude_tmux_hooks.py stop
 ./scripts/debug_logger.py view claude_tmux_hooks
 

@@ -7,8 +7,10 @@ import json
 import time
 from pathlib import Path
 from debug_logger import DebugLogger
+from tmux_integration import TmuxIntegration
 
 logger = DebugLogger('claude_tmux_hooks')
+tmux_integration = TmuxIntegration()
 
 STATUS_EMOJIS = {
     'running': '🏃',
@@ -194,6 +196,8 @@ def set_status_for_pane(pane_id, status):
         logger.error(f"Failed to set pane name for {pane_id}")
         return False
     save_pane_state(pane_id, original_name, status)
+    tmux_integration.register_ai_pane(pane_id, 'claude')
+    tmux_integration.refresh_session_markers()
     return True
 
 
@@ -249,6 +253,7 @@ def restore_pane_name(pane_id):
         logger.info(f"Restored pane {pane_id} window name to: {original_name}")
         set_window_auto_rename(pane_id, auto_rename_was_on)
         cleanup_pane_state(pane_id)
+        tmux_integration.refresh_session_markers()
         return True
     except subprocess.CalledProcessError as e:
         logger.log_tmux_command(['tmux', 'rename-window', '-t', pane_id, original_name], error=str(e))

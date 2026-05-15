@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py running"
+            "command": "/absolute/path/to/tmux-claude/scripts/claude_tmux_hooks.py running"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py stop"
+            "command": "/absolute/path/to/tmux-claude/scripts/claude_tmux_hooks.py stop"
           }
         ]
       }
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.tmux/plugins/tmux-claude/scripts/claude_tmux_hooks.py permission"
+            "command": "/absolute/path/to/tmux-claude/scripts/claude_tmux_hooks.py permission"
           }
         ]
       }

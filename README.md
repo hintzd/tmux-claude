@@ -7,6 +7,7 @@ A tmux plugin that displays emoji status indicators in pane names when Claude Co
 - **🏃 Running Status**: Shows running emoji when user submits a prompt
 - **✅ Stop Status**: Shows checkmark emoji when Claude finishes responding
 - **❓ Permission Status**: Shows question mark emoji when Claude needs tool permission
+- **🤖 Session Picker Marker**: Prefixes one `🤖` per AI agent pane in the session picker (`prefix + S`) — works across both tmux-claude and tmux-codex if both are installed
 - **Multi-pane Support**: Tracks multiple Claude instances across different tmux panes
 - **Smart Restoration**: Automatically restores original pane names when user switches panes or presses Enter
 - **Pure Python**: No external dependencies, uses only Python 3 standard library
@@ -115,6 +116,10 @@ Add the following configuration to your `~/.claude/settings.json`:
 
 Use the provided `example-claude-settings.json` as a template and adjust the paths according to your installation.
 
+### Using alongside tmux-codex
+
+If you also install [tmux-codex](https://github.com/hintzd/tmux-codex), the session picker `🤖` counts will aggregate across both plugins automatically. A session containing two Claude panes and one Codex pane will show `🤖🤖🤖`. Both plugins write to the shared tracker at `~/.config/tmux/ai-pane-tracker.json`, which is created automatically on first use. No extra configuration is needed — install both plugins and load both in your `~/.tmux.conf`.
+
 ## Usage
 
 1. **Start Claude in tmux panes**: Run Claude Code in different tmux panes as usual.
@@ -184,11 +189,13 @@ View tracked panes status:
    - ✅ when Claude finishes (`Stop` hook)
    - ❓ when Claude needs tool permission (`PreToolUse` hook)
 
-4. **Activity Monitoring**: The plugin monitors pane activity and restores original names when users switch panes or press Enter.
+4. **Session Picker**: Overrides `prefix + S` to show a `🤖` count per session. The count reflects all AI agent panes across both tmux-claude and tmux-codex — a session with two Claude panes and one Codex pane shows `🤖🤖🤖`. Both plugins share a tracker at `~/.config/tmux/ai-pane-tracker.json`; panes are auto-detected by process inspection even before any hook fires.
 
-5. **State Management**: Pane states are stored in temporary JSON files and cleaned up automatically.
+5. **Activity Monitoring**: The plugin monitors pane activity and restores original names when users switch panes or press Enter.
 
-6. **Multi-Pane Support**: Works correctly across multiple tmux panes running different Claude instances simultaneously.
+6. **State Management**: Pane states are stored in temporary JSON files and cleaned up automatically.
+
+7. **Multi-Pane Support**: Works correctly across multiple tmux panes running different Claude instances simultaneously.
 
 ## File Structure
 
@@ -196,11 +203,12 @@ View tracked panes status:
 tmux-claude/
 ├── tmux-claude.tmux              # Main plugin file
 ├── scripts/
-│   ├── claude_tmux_hooks.py      # Hook handler (Stop/Notification)
-│   ├── tmux_integration.py       # Tmux pane management
+│   ├── claude_tmux_hooks.py      # Hook handler (running/stop/permission)
+│   ├── tmux_integration.py       # Tmux pane management and session markers
 │   ├── pane_tracker.py           # Pane activity monitoring
+│   ├── open_session_picker.sh    # Session picker with 🤖 count display
 │   └── notification_handler.py   # System notifications
-├── example-claude-settings.json  # Example Claude configuration
+├── example-claude-settings.json  # Example Claude hooks configuration
 └── README.md                     # This file
 ```
 
